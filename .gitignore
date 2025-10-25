@@ -1,0 +1,36 @@
+# Build artifacts
+build/
+bin/
+obj/
+out/
+*.o
+*.a
+*.so
+*.exe
+*.dll
+*.dylib
+
+# Executable binaries
+*.out
+*.elf
+
+# Cache files
+.cache/
+
+# Backup / temp files
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Dependency / IDE stuff
+.vscode/
+.idea/
+*.log
+
+# Coverage / testing outputs
+*.gcda
+*.gcno
+*.gcov
+coverage/

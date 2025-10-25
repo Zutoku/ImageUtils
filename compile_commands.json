@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/image_utils.o",
+      "src/image_utils.c"
+    ],
+    "directory": "/home/luis/my_ws/mini_projects/ImageUtils",
+    "file": "/home/luis/my_ws/mini_projects/ImageUtils/src/image_utils.c",
+    "output": "/home/luis/my_ws/mini_projects/ImageUtils/build/image_utils.o"
+  }
+]
