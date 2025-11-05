@@ -1,3 +1,4 @@
+#include "image.h"
 #include "image_utils.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,7 +9,7 @@ void print_help(void) {
   printf(
       "Usage: image-utils <operation> <source-file> optional:<destination-file>\n \
       Valid operations:\n \
-      - grayscale\n \
+      - greyscale\n \
       - horzizontal-mirror\n \
       - vertical-mirror\n \
       - canny-edge-detector\n");
@@ -94,7 +95,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  // image_utils(operation, source_image, destination_image);
+  image_utils(operation, source_image, destination_image);
 
   if (source_image) {
     fclose(source_image);
