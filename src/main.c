@@ -65,16 +65,28 @@ int main(int argc, char *argv[]) {
   const char *destination_filename = NULL;
 
   if (overwrite_source) {
-    destination_image = fopen(source_filename, "r+b");
-    if (!destination_image) {
-      fprintf(stderr, "Error: could not open '%s' in read/write mode.\n",
+    source_image = fopen(source_filename, "rb");
+    if (!source_image) {
+      fprintf(stderr, "Error: could not open '%s' in read mode.\n",
               source_filename);
       return 1;
     }
+
+    destination_image = fopen(source_filename, "wb");
+    if (!destination_image) {
+      fprintf(stderr, "Error: could not open '%s' in write mode.\n",
+              source_filename);
+      fclose(source_image);
+      return 1;
+    }
+
+    image_utils(operation, source_image, destination_image);
+
+    fclose(source_image);
+    fclose(destination_image);
   } else {
     if (argc < 4) {
       fprintf(stderr, "Error: missing destination filename.\n");
-      fclose(source_image);
       return 1;
     }
 
@@ -93,15 +105,15 @@ int main(int argc, char *argv[]) {
       fclose(destination_image);
       return 1;
     }
-  }
 
-  image_utils(operation, source_image, destination_image);
+    image_utils(operation, source_image, destination_image);
 
-  if (source_image) {
-    fclose(source_image);
-  }
-  if (destination_image) {
-    fclose(destination_image);
+    if (source_image) {
+      fclose(source_image);
+    }
+    if (destination_image) {
+      fclose(destination_image);
+    }
   }
 
   return 0;
