@@ -20,6 +20,36 @@ void write_func(void *context, void *data, int size) {
   }
 }
 
+void rotate_image(void *data, int *w, int *h, int channels) {
+  int new_width = *w;
+  int width = *w;
+  int height = *h;
+
+  int image_length = width * height * channels;
+  unsigned char *rotated_image = malloc(image_length);
+  unsigned char *src = (unsigned char *)data;
+
+  int column = 1;
+  int row = 1;
+  int new_pos;
+  int horizontal_source_pixels;
+
+  for (; row <= height; row++) {
+    horizontal_source_pixels = row * width * channels - 1;
+    new_pos = column * new_width - channels * row;
+    column = 1;
+    for (; column <= width; column++) {
+      memcpy(&rotated_image[new_pos], &src[column - 1], channels);
+    }
+  }
+  int temp = *w;
+  *w = *h;
+  *h = temp;
+
+  memcpy(data, rotated_image, image_length);
+  free(rotated_image);
+}
+
 void image_utils(const char *operation, FILE *src_file, FILE *dest_file) {
   int width, height, channels, file_valid = 0;
   file_valid = stbi_info_from_file(src_file, &width, &height, &channels);
@@ -27,14 +57,19 @@ void image_utils(const char *operation, FILE *src_file, FILE *dest_file) {
 
   unsigned char *data = NULL;
   int requested_channels = 0; // 0 preserves original channels
-  if (file_valid && strcmp(operation, "greyscale") == 0) {
-    requested_channels = 1; // force single channel for greyscale
-    data = stbi_load_from_file(src_file, &width, &height, &channels,
-                               requested_channels);
-  } else if (file_valid) {
-    requested_channels = 0; // keep original
-    data = stbi_load_from_file(src_file, &width, &height, &channels,
-                               requested_channels);
+  if (file_valid) {
+    if (strcmp(operation, "greyscale") == 0) {
+      requested_channels = 1; // force single channel for greyscale
+      data = stbi_load_from_file(src_file, &width, &height, &channels,
+                                 requested_channels);
+    } else {
+      requested_channels = 0; // keep original
+      data = stbi_load_from_file(src_file, &width, &height, &channels,
+                                 requested_channels);
+    }
+    if (strcmp(operation, "rotate-clockwise") == 0) {
+      rotate_image(data, &width, &height, channels);
+    }
   } else {
     fprintf(stderr, "Failed to read image information.");
     return;
@@ -45,10 +80,10 @@ void image_utils(const char *operation, FILE *src_file, FILE *dest_file) {
     return;
   }
 
-  Image img = {0};
-  img.width = width;
-  img.height = height;
-  img.channels = channels;
+  // Image img = {0};
+  // img.width = width;
+  // img.height = height;
+  // img.channels = channels;
 
   int output_channels =
       (requested_channels == 0) ? channels : requested_channels;
