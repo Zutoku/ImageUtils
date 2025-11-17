@@ -12,7 +12,9 @@ void print_help(void) {
       - greyscale\n \
       - horzizontal-mirror\n \
       - vertical-mirror\n \
-      - canny-edge-detector\n");
+      - canny-edge-detector\n \
+      To overwrite source-file use: \
+      --overwrite");
 }
 
 int main(int argc, char *argv[]) {
@@ -21,10 +23,19 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
+  const char *operation = argv[1];
+  const char *source_filename = argv[2];
+  bool overwrite_source = false;
+
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
       print_help();
       return 0;
+    }
+    // Give option to overwrite source as flag
+    // to prevent forced interaction
+    if (strcmp(argv[i], "--overwrite") == 0) {
+      overwrite_source = true;
     }
   }
 
@@ -33,11 +44,11 @@ int main(int argc, char *argv[]) {
     print_help();
     return 1;
   }
-  const char *operation = argv[1];
-  const char *source_filename = argv[2];
-  bool overwrite_source = false;
 
-  if (argc == 3) {
+  // Strange condition but essentially:
+  // We want to overwrite here, when the overwrite
+  // flag wasn't given
+  if (argc == 3 && !overwrite_source) {
     printf("This operation will overwrite the source-file. Proceed? (y/n): ");
     bool input_invalid = true;
     char input[8];

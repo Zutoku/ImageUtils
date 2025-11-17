@@ -7,6 +7,8 @@
 
 #include "image.h"
 #include "image_utils.h"
+void apply_orientation_transform(void *data, int *width, int *height,
+                                 int channels, int orientation);
 
 void write_func(void *context, void *data, int size) {
   // Context here could be a pointer to anything, here we cast it to FILE*
@@ -19,36 +21,98 @@ void write_func(void *context, void *data, int size) {
     return;
   }
 }
-
-void rotate_image(void *data, int *w, int *h, int channels) {
-  int new_width = *w;
+void rotate_image(unsigned char *data, int *w, int *h, int channels) {
   int width = *w;
   int height = *h;
 
-  int image_length = width * height * channels;
-  unsigned char *rotated_image = malloc(image_length);
-  unsigned char *src = (unsigned char *)data;
+  int new_width = height;
+  int new_height = width;
 
-  int column = 1;
-  int row = 1;
-  int new_pos;
-  int horizontal_source_pixels;
+  unsigned char *rotated = malloc(width * height * channels);
 
-  for (; row <= height; row++) {
-    horizontal_source_pixels = row * width * channels - 1;
-    new_pos = column * new_width - channels * row;
-    column = 1;
-    for (; column <= width; column++) {
-      memcpy(&rotated_image[new_pos], &src[column - 1], channels);
+  for (int old_y = 0; old_y < height; old_y++) {
+    for (int old_x = 0; old_x < width; old_x++) {
+
+      int new_x = height - 1 - old_y; // rotated X
+      int new_y = old_x;              // rotated Y
+
+      unsigned char *src_px = data + (old_y * width + old_x) * channels;
+
+      unsigned char *dst_px = rotated + (new_y * new_width + new_x) * channels;
+
+      memcpy(dst_px, src_px, channels);
     }
   }
-  int temp = *w;
-  *w = *h;
-  *h = temp;
 
-  memcpy(data, rotated_image, image_length);
-  free(rotated_image);
+  memcpy(data, rotated, width * height * channels);
+
+  free(rotated);
+
+  *w = new_width;
+  *h = new_height;
 }
+//
+// void rotate_image(unsigned char *data, int *w, int *h, int channels) {
+//   int new_width = *w;
+//   int width = *w;
+//   int height = *h;
+//
+//   int image_length = width * height * channels;
+//   unsigned char *rotated_image = malloc(image_length);
+//   unsigned char *src = data;
+//
+//   int column = 1;
+//   int row = 1;
+//   int new_pos;
+//   int horizontal_source_pixels;
+// /*
+//                    1 2 3
+// 0..width           a b c
+// width+1 .. 2*width d e f
+//
+//
+//             1 2
+// 1*new_width d a
+// 2*new_width e b
+// 3*new_width f c
+//
+// 2,2 becomes 1,2
+// 3,1 becomes 1,3
+//
+// old x becomes new y
+// abc;def => da;eb;fc
+// new x = new_width
+//
+// row 1 becomes last column of new width
+// */
+//
+// new_column = new_width - old_row + 1
+// new_row = old_column
+// coordinates:
+//   x = 0 .. width
+//   y = row*width
+//
+// e.g. (3, 5)
+//   x = 3
+//   y = 5 * width
+//
+//     asdjfk;asjdflk;asdjflk;asdjfkl;1345;
+//
+//   for (; row <= height; row++) {
+//     horizontal_source_pixels = row * width * channels - 1;
+//     new_pos = column * new_width - channels * row;
+//     column = 1;
+//     for (; column <= width; column++) {
+//       memcpy(&rotated_image[new_pos], &src[column - 1], channels);
+//     }
+//   }
+//   int temp = *w;
+//   *w = *h;
+//   *h = temp;
+//
+//   memcpy(data, rotated_image, image_length);
+//   free(rotated_image);
+// }
 
 void image_utils(const char *operation, FILE *src_file, FILE *dest_file) {
   int width, height, channels, file_valid = 0;
