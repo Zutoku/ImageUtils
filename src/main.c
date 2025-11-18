@@ -23,8 +23,6 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  const char *operation = argv[1];
-  const char *source_filename = argv[2];
   bool overwrite_source = false;
 
   for (int i = 1; i < argc; i++) {
@@ -44,6 +42,9 @@ int main(int argc, char *argv[]) {
     print_help();
     return 1;
   }
+
+  const char *operation = argv[1];
+  const char *source_filename = argv[2];
 
   // Strange condition but essentially:
   // We want to overwrite here, when the overwrite
@@ -71,7 +72,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  FILE *destination_image = NULL;
   FILE *source_image = NULL;
   const char *destination_filename = NULL;
 
@@ -82,19 +82,12 @@ int main(int argc, char *argv[]) {
               source_filename);
       return 1;
     }
+    destination_filename = source_filename;
+    image_utils(operation, source_image, destination_filename);
 
-    destination_image = fopen(source_filename, "wb");
-    if (!destination_image) {
-      fprintf(stderr, "Error: could not open '%s' in write mode.\n",
-              source_filename);
+    if (source_image) {
       fclose(source_image);
-      return 1;
     }
-
-    image_utils(operation, source_image, destination_image);
-
-    fclose(source_image);
-    fclose(destination_image);
   } else {
     if (argc < 4) {
       fprintf(stderr, "Error: missing destination filename.\n");
@@ -102,28 +95,18 @@ int main(int argc, char *argv[]) {
     }
 
     destination_filename = argv[3];
-    destination_image = fopen(destination_filename, "wb");
-    if (!destination_image) {
-      fprintf(stderr, "Error: could not open or create '%s' write mode.\n",
-              destination_filename);
-      return 1;
-    }
 
     source_image = fopen(source_filename, "rb");
     if (!source_image) {
       fprintf(stderr, "Error: could not open source file '%s' in read mode.\n",
               source_filename);
-      fclose(destination_image);
       return 1;
     }
 
-    image_utils(operation, source_image, destination_image);
+    image_utils(operation, source_image, destination_filename);
 
     if (source_image) {
       fclose(source_image);
-    }
-    if (destination_image) {
-      fclose(destination_image);
     }
   }
 

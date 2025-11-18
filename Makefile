@@ -5,7 +5,7 @@ LIBS = -lpng -ljpeg   # add any other libs here
 
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:src/%.c=build/%.o)
-TARGET = build/image-utils
+TARGET = ./image-utils
 
 $(TARGET): $(OBJ)
 	@mkdir -p build
