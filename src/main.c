@@ -1,4 +1,3 @@
-#include "image.h"
 #include "image_utils.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -83,7 +82,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
     destination_filename = source_filename;
-    image_utils(operation, source_image, destination_filename);
+    process_image(operation, source_image, destination_filename);
 
     if (source_image) {
       fclose(source_image);
@@ -103,7 +102,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    image_utils(operation, source_image, destination_filename);
+    process_image(operation, source_image, destination_filename);
 
     if (source_image) {
       fclose(source_image);
