@@ -9,6 +9,7 @@ void print_help(void) {
       "Usage: image-utils <operation> <source-file> optional:<destination-file>\n \
       Valid operations:\n \
       - greyscale\n \
+      - rotate-clockwise\n \
       - horzizontal-mirror\n \
       - vertical-mirror\n \
       - canny-edge-detector\n \
