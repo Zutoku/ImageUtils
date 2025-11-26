@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
+CFLAGS = -Wall -Wextra -O3 -Iinclude
 LDFLAGS = -lm
-LIBS = -lpng -ljpeg   # add any other libs here
+LIBS = -lpng -ljpeg
 
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:src/%.c=build/%.o)
