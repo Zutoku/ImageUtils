@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
               source_filename);
       return 1;
     }
+
     destination_filename = source_filename;
     process_image(operation, source_image, destination_filename);
 
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
 
     source_image = fopen(source_filename, "rb");
     if (!source_image) {
-      fprintf(stderr, "Error: could not open source file '%s' in read mode.\n",
+      fprintf(stderr, "Error: could not open '%s' in read mode.\n",
               source_filename);
       return 1;
     }
