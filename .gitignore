@@ -3,6 +3,7 @@ build/
 bin/
 obj/
 out/
+test/
 *.o
 *.a
 *.so
@@ -13,6 +14,7 @@ out/
 # Executable binaries
 *.out
 *.elf
+image-utils
 
 # Cache files
 .cache/
