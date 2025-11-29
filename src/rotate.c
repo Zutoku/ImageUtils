@@ -27,7 +27,11 @@ void rotate_image_clockwise(Image *img) {
 
       unsigned char *dst_px = rotated + (new_y * new_width + new_x) * channels;
 
-      memcpy(dst_px, src_px, channels);
+      // memcpy(dst_px, src_px, channels);
+      // Direct copy is faster than memcpy for small sizes (1-4 bytes)
+      for (int c = 0; c < channels; c++) {
+        dst_px[c] = src_px[c];
+      }
     }
   }
 
